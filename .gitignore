@@ -3,13 +3,13 @@
 Thumbs.db
 
 # Временные файлы Neovim (на всякий случай, если они создадутся)
-*.swp
-*.swo
-*~
+./devcontainer/*.swp
+./devcontainer/*.swo
+./devcontainer/*~
 
 # Локальные директории с историей изменений (если настроены)
-.undodir
-.undofiles
+./devcontainer/.undodir
+./devcontainer/.undofiles
 
 # Локальные файлы, специфичные для IDE (если вы откроете проект в другой IDE)
 .vscode/
