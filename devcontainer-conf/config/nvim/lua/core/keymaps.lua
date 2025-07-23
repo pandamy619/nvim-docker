@@ -13,4 +13,9 @@ keymap.set("n", "<C-j>", "<C-w>j", { desc = "Перейти в окно сниз
 keymap.set("n", "<C-k>", "<C-w>k", { desc = "Перейти в окно сверху" })
 keymap.set("n", "<C-l>", "<C-w>l", { desc = "Перейти в окно справа" })
 
+-- Открыть/Закрыть файловый менеджер
 keymap.set("n", "<leader>e", ":Neotree toggle<CR>", { desc = "Открыть/Закрыть файловый менеджер" })
+
+-- Новая версия для Neogit
+keymap.set("n", "<leader>gg", function () require("neogit").open() end, { desc = "Открыть Neogit" })
+

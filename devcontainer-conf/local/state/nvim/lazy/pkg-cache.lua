@@ -1,1 +1,1 @@
-return {version=12,pkgs={{name="plenary.nvim",spec={"nvim-lua/plenary.nvim",lazy=true,},file="community",source="lazy",dir="/home/dev/.local/share/nvim/lazy/plenary.nvim",},},}
+return {pkgs={{name="plenary.nvim",source="lazy",dir="/home/dev/.local/share/nvim/lazy/plenary.nvim",spec={"nvim-lua/plenary.nvim",lazy=true,},file="community",},{name="telescope.nvim",source="rockspec",dir="/home/dev/.local/share/nvim/lazy/telescope.nvim",spec={"telescope.nvim",specs={{"nvim-lua/plenary.nvim",lazy=true,},},build=false,},file="telescope.nvim-scm-1.rockspec",},},version=12,}
