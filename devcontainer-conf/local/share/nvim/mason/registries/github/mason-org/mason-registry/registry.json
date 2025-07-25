@@ -2303,7 +2303,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:github/eclipse-che4z/che-che4z-lsp-for-cobol@2.4.1",
+      "id": "pkg:github/eclipse-che4z/che-che4z-lsp-for-cobol@2.4.3",
       "asset": [
         {
           "target": "darwin_arm64",
@@ -2626,7 +2626,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:npm/%40github/copilot-language-server@1.347.0"
+      "id": "pkg:npm/%40github/copilot-language-server@1.348.0"
     },
     "bin": {
       "copilot-language-server": "npm:copilot-language-server"
@@ -5197,7 +5197,7 @@
     "languages": [],
     "categories": [],
     "source": {
-      "id": "pkg:github/cli/cli@v2.76.0",
+      "id": "pkg:github/cli/cli@v2.76.1",
       "asset": [
         {
           "target": "darwin_x64",
@@ -6354,7 +6354,7 @@
       "Linter"
     ],
     "source": {
-      "id": "pkg:gem/haml_lint@0.65.0"
+      "id": "pkg:gem/haml_lint@0.65.1"
     },
     "bin": {
       "haml-lint": "gem:haml-lint"
@@ -6973,14 +6973,14 @@
       "DAP"
     ],
     "source": {
-      "id": "pkg:openvsx/vscjava/vscode-java-debug@0.58.1",
+      "id": "pkg:openvsx/vscjava/vscode-java-debug@0.58.2",
       "download": {
         "file": "vscjava.vscode-java-debug-{{version}}.vsix"
       }
     },
     "share": {
       "java-debug-adapter/": "extension/server/",
-      "java-debug-adapter/com.microsoft.java.debug.plugin.jar": "extension/server/com.microsoft.java.debug.plugin-0.53.1.jar"
+      "java-debug-adapter/com.microsoft.java.debug.plugin.jar": "extension/server/com.microsoft.java.debug.plugin-0.53.2.jar"
     }
   },
   {
@@ -9851,7 +9851,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:npm/%40nomicfoundation/solidity-language-server@0.8.23"
+      "id": "pkg:npm/%40nomicfoundation/solidity-language-server@0.8.24"
     },
     "schemas": {
       "lsp": "vscode:https://raw.githubusercontent.com/NomicFoundation/hardhat-vscode/v{{version}}/client/package.json"
@@ -12460,7 +12460,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:gem/rubocop@1.78.0"
+      "id": "pkg:gem/rubocop@1.79.0"
     },
     "bin": {
       "rubocop": "gem:rubocop"
@@ -12483,7 +12483,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:gem/ruby-lsp@0.26.0",
+      "id": "pkg:gem/ruby-lsp@0.26.1",
       "extra_packages": [
         "ruby-lsp-rails"
       ]
@@ -12599,7 +12599,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:pypi/ruff@0.12.4"
+      "id": "pkg:pypi/ruff@0.12.5"
     },
     "bin": {
       "ruff": "pypi:ruff"
@@ -12866,7 +12866,7 @@
       "Linter"
     ],
     "source": {
-      "id": "pkg:github/Kampfkarren/selene@0.28.0",
+      "id": "pkg:github/Kampfkarren/selene@0.29.0",
       "asset": [
         {
           "target": [
@@ -12915,7 +12915,7 @@
       "Linter"
     ],
     "source": {
-      "id": "pkg:pypi/semgrep@1.128.1",
+      "id": "pkg:pypi/semgrep@1.130.0",
       "supported_platforms": [
         "unix"
       ]
@@ -13109,7 +13109,7 @@
       "Linter"
     ],
     "source": {
-      "id": "pkg:npm/%40shopify/cli@3.82.1"
+      "id": "pkg:npm/%40shopify/cli@3.83.0"
     },
     "bin": {
       "shopify": "npm:shopify"
@@ -13836,7 +13836,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:gem/sorbet@0.5.12356",
+      "id": "pkg:gem/sorbet@0.5.12358",
       "supported_platforms": [
         "unix"
       ]
@@ -15340,7 +15340,7 @@
       "Linter"
     ],
     "source": {
-      "id": "pkg:npm/textlint@15.2.0"
+      "id": "pkg:npm/textlint@15.2.1"
     },
     "bin": {
       "textlint": "npm:textlint"
@@ -15747,7 +15747,7 @@
       "lspconfig": "tombi"
     },
     "source": {
-      "id": "pkg:pypi/tombi@0.4.35"
+      "id": "pkg:pypi/tombi@0.4.37"
     },
     "bin": {
       "tombi": "pypi:tombi"
@@ -15883,7 +15883,7 @@
       "Linter"
     ],
     "source": {
-      "id": "pkg:github/trufflesecurity/trufflehog@v3.90.1",
+      "id": "pkg:github/trufflesecurity/trufflehog@v3.90.2",
       "asset": [
         {
           "target": "darwin_x64",
@@ -15956,7 +15956,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:github/ribru17/ts_query_ls@v3.8.0",
+      "id": "pkg:github/ribru17/ts_query_ls@v3.9.0",
       "asset": [
         {
           "target": "darwin_x64",
@@ -16476,6 +16476,86 @@
     },
     "bin": {
       "usort": "pypi:usort"
+    }
+  },
+  {
+    "name": "uv",
+    "description": "An extremely fast Python package and project manager, written in Rust\n",
+    "homepage": "https://docs.astral.sh/uv/",
+    "licenses": [
+      "Apache-2.0",
+      "MIT"
+    ],
+    "languages": [
+      "Python"
+    ],
+    "categories": [],
+    "source": {
+      "id": "pkg:github/astral-sh/uv@0.8.3",
+      "asset": [
+        {
+          "target": "darwin_x64",
+          "file": "uv-x86_64-apple-darwin.tar.gz",
+          "uv": "uv-x86_64-apple-darwin/uv",
+          "uvx": "uv-x86_64-apple-darwin/uvx"
+        },
+        {
+          "target": "darwin_arm64",
+          "file": "uv-aarch64-apple-darwin.tar.gz",
+          "uv": "uv-aarch64-apple-darwin/uv",
+          "uvx": "uv-aarch64-apple-darwin/uvx"
+        },
+        {
+          "target": "linux_x64",
+          "file": "uv-x86_64-unknown-linux-gnu.tar.gz",
+          "uv": "uv-x86_64-unknown-linux-gnu/uv",
+          "uvx": "uv-x86_64-unknown-linux-gnu/uvx"
+        },
+        {
+          "target": "linux_x86",
+          "file": "uv-i686-unknown-linux-gnu.tar.gz",
+          "uv": "uv-i686-unknown-linux-gnu/uv",
+          "uvx": "uv-i686-unknown-linux-gnu/uvx"
+        },
+        {
+          "target": "linux_arm64",
+          "file": "uv-aarch64-unknown-linux-gnu.tar.gz",
+          "uv": "uv-aarch64-unknown-linux-gnu/uv",
+          "uvx": "uv-aarch64-unknown-linux-gnu/uvx"
+        },
+        {
+          "target": "linux_arm",
+          "file": "uv-armv7-unknown-linux-gnueabihf.tar.gz",
+          "uv": "uv-armv7-unknown-linux-gnueabihf/uv",
+          "uvx": "uv-armv7-unknown-linux-gnueabihf/uvx"
+        },
+        {
+          "target": "win_x64",
+          "file": "uv-x86_64-pc-windows-msvc.zip",
+          "uv": "uv.exe",
+          "uvw": "uvw.exe",
+          "uvx": "uvx.exe"
+        },
+        {
+          "target": "win_x86",
+          "file": "uv-i686-pc-windows-msvc.zip",
+          "uv": "uv.exe",
+          "uvw": "uvw.exe",
+          "uvx": "uvx.exe"
+        },
+        {
+          "target": "win_arm64",
+          "file": "uv-aarch64-pc-windows-msvc.zip",
+          "uv": "uv.exe",
+          "uvw": "uvw.exe",
+          "uvx": "uvx.exe"
+        }
+      ]
+    },
+    "bin": {
+      "uv": "{{source.asset.uv}}",
+      "uvw": "{{source.asset.uvw}}",
+      "uvx": "{{source.asset.uvx}}"
     }
   },
   {
@@ -17221,7 +17301,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:npm/%40vue/language-server@3.0.3",
+      "id": "pkg:npm/%40vue/language-server@3.0.4",
       "extra_packages": [
         "typescript"
       ]
@@ -17691,7 +17771,7 @@
     ],
     "categories": [],
     "source": {
-      "id": "pkg:github/mikefarah/yq@v4.46.1",
+      "id": "pkg:github/mikefarah/yq@v4.47.1",
       "asset": [
         {
           "target": "darwin_arm64",
