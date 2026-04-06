@@ -1,44 +1,45 @@
+local servers = { "lua_ls", "pyright", "ts_ls", "gopls", "rust_analyzer", "cssls" }
+
 return {
-  -- ===================================================================
-  --  Mason: Установщик языковых серверов
-  -- ===================================================================
   {
     "williamboman/mason.nvim",
-    config = function()
-      require("mason").setup()
-    end,
+    opts = {},
   },
 
-  -- ===================================================================
-  -- Lspconfig: Настройщик языковых серверов
-  -- ===================================================================
   {
-    "neovim/nvim-lspconfig",
-    -- Зависимости: mason для установки и mason-lspconfig для связи
+    "williamboman/mason-lspconfig.nvim",
     dependencies = {
       "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
+    },
+    opts = {
+      ensure_installed = servers,
+      automatic_enable = false,
+    },
+  },
+
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = {
       "williamboman/mason-lspconfig.nvim",
+      "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
       local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      -- Список серверов, которые нужно автоматически установить и настроить
-      local servers = { "lua_ls", "pyright", "tsserver", "gopls", "rust_analyzer", "cssls" }
-
-      -- Настраиваем каждый сервер из списка
       for _, server_name in ipairs(servers) do
         lspconfig[server_name].setup({
-          capabilities = capabilities, -- Сообщаем серверу о возможностях нашего клиента
+          capabilities = capabilities,
         })
       end
 
-      -- Горячие клавиши, которые будут работать только при активном LSP
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspConfig", {}),
         callback = function(ev)
           local keymap = vim.keymap
           local opts = { buffer = ev.buf }
+
           keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
           keymap.set("n", "gd", vim.lsp.buf.definition, opts)
           keymap.set("n", "K", vim.lsp.buf.hover, opts)
@@ -50,28 +51,24 @@ return {
     end,
   },
 
-  -- ===================================================================
-  -- Cmp: Движок автодополнения
-  -- ===================================================================
   {
     "hrsh7th/nvim-cmp",
     dependencies = {
-      "hrsh7th/cmp-nvim-lsp",    -- Источник для LSP
-      "hrsh7th/cmp-buffer",      -- Источник из слов в текущем буфере
-      "hrsh7th/cmp-path",        -- Источник для путей файловой системы
-      "L3MON4D3/LuaSnip",        -- Движок сниппетов
-      "saadparwaiz1/cmp_luasnip", -- Источник для сниппетов
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "L3MON4D3/LuaSnip",
+      "saadparwaiz1/cmp_luasnip",
     },
     config = function()
       local cmp = require("cmp")
+
       cmp.setup({
-        -- Подключаем сниппеты
         snippet = {
           expand = function(args)
             require("luasnip").lsp_expand(args.body)
           end,
         },
-        -- Настраиваем горячие клавиши для меню автодополнения
         mapping = cmp.mapping.preset.insert({
           ["<C-k>"] = cmp.mapping.select_prev_item(),
           ["<C-j>"] = cmp.mapping.select_next_item(),
@@ -79,9 +76,8 @@ return {
           ["<C-f>"] = cmp.mapping.scroll_docs(4),
           ["<C-Space>"] = cmp.mapping.complete(),
           ["<C-e>"] = cmp.mapping.abort(),
-          ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Принять выбранный вариант
+          ["<CR>"] = cmp.mapping.confirm({ select = true }),
         }),
-        -- Указываем источники для автодополнения и их приоритет
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
           { name = "luasnip" },
