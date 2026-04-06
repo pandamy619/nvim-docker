@@ -1,54 +1,55 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 # --- Исполняемый файл для запуска Neovim в Docker с автосборкой ---
 
 # --- Конфигурация ---
 IMAGE_NAME="my-dev-nvim"
-# Директория, где гарантированно лежит наш Dockerfile
-BUILD_CONTEXT="$PWD"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+CALLER_CWD="$PWD"
+BUILD_CONTEXT="$SCRIPT_DIR"
 DOCKERFILE_PATH="$BUILD_CONTEXT/Dockerfile"
 
-# --- 1. ПРОВЕРКА И СБОРКА ОБРАЗА (без изменений) ---
+if ! command -v docker >/dev/null 2>&1; then
+    echo "❌ Ошибка: Docker не найден в PATH."
+    exit 1
+fi
+
+mkdir -p \
+    "$BUILD_CONTEXT/local/share/nvim" \
+    "$BUILD_CONTEXT/local/state/nvim" \
+    "$BUILD_CONTEXT/cache/nvim"
+
+# --- 1. ПРОВЕРКА И СБОРКА ОБРАЗА ---
 echo "🔎 Проверяю наличие Docker-образа '$IMAGE_NAME'..."
-IMAGE_ID=$(docker images -q "$IMAGE_NAME")
+IMAGE_ID="$(docker images -q "$IMAGE_NAME")"
 if [ -z "$IMAGE_ID" ]; then
     echo "⚠️  Образ не найден. Требуется сборка."
     if [ ! -f "$DOCKERFILE_PATH" ]; then
         echo -e "\n❌ Ошибка: Dockerfile не найден в $DOCKERFILE_PATH"
         exit 1
     fi
+
     echo -e "\n🔧 Начинаю сборку образа..."
     docker build -t "$IMAGE_NAME" "$BUILD_CONTEXT"
-    if [ $? -ne 0 ]; then
-        echo -e "\n❌ Ошибка: Сборка Docker-образа не удалась."
-        exit 1
-    else
-        echo -e "\n✅ Образ '$IMAGE_NAME' успешно собран."
-    fi
+    echo -e "\n✅ Образ '$IMAGE_NAME' успешно собран."
 else
     echo "✅ Образ найден. Пропускаю сборку."
 fi
 
 # --- 2. ОПРЕДЕЛЕНИЕ ПУТИ К ПРОЕКТУ И ЗАПУСК ---
-# --------------------------------------------------
 echo -e "\n🚀  **Запуск Neovim в Docker**\n"
 
-# ===== ГЛАВНОЕ ИЗМЕНЕНИЕ ЗДЕСЬ =====
-# Если скрипту передан аргумент (путь к проекту), используем его.
-if [ -n "$1" ]; then
+if [ -n "${1:-}" ]; then
     TARGET_PATH="$1"
     echo "📂 Указана директория проекта: $TARGET_PATH"
 else
-    # Иначе, используем текущую директорию по умолчанию.
-    TARGET_PATH="$PWD"
+    TARGET_PATH="$CALLER_CWD"
     echo "📂 Использую текущую директорию как проект: $TARGET_PATH"
 fi
 
-# Преобразуем путь в абсолютный, чтобы Docker его точно понял.
-# Это также является проверкой, что директория существует.
-PROJECT_PATH_ABSOLUTE=$(realpath "$TARGET_PATH" 2>/dev/null)
-
-if [ -z "$PROJECT_PATH_ABSOLUTE" ]; then
+if ! PROJECT_PATH_ABSOLUTE="$(cd "$TARGET_PATH" 2>/dev/null && pwd -P)"; then
     echo -e "\n❌ Ошибка: Не удалось определить путь к директории '$TARGET_PATH'. Убедитесь, что она существует."
     exit 1
 fi
