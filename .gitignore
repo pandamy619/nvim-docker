@@ -15,5 +15,7 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Игнорировать всю папку с кэшем
+# Локальные данные Neovim, которые создаются во время работы контейнера
+devcontainer-conf/.netrwhist
+devcontainer-conf/local/
 devcontainer-conf/cache/
