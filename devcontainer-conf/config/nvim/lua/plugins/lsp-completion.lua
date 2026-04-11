@@ -1,37 +1,28 @@
-local servers = { "lua_ls", "pyright", "ts_ls", "gopls", "rust_analyzer", "cssls" }
+local servers = {
+  lua_ls = "lua-language-server",
+  pyright = "pyright-langserver",
+  ts_ls = "typescript-language-server",
+  gopls = "gopls",
+  rust_analyzer = "rust-analyzer",
+  cssls = "vscode-css-language-server",
+}
 
 return {
   {
-    "williamboman/mason.nvim",
-    opts = {},
-  },
-
-  {
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = {
-      "williamboman/mason.nvim",
-      "neovim/nvim-lspconfig",
-    },
-    opts = {
-      ensure_installed = servers,
-      automatic_enable = false,
-    },
-  },
-
-  {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "williamboman/mason-lspconfig.nvim",
       "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
       local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      for _, server_name in ipairs(servers) do
-        lspconfig[server_name].setup({
-          capabilities = capabilities,
-        })
+      for server_name, executable in pairs(servers) do
+        if vim.fn.executable(executable) == 1 then
+          lspconfig[server_name].setup({
+            capabilities = capabilities,
+          })
+        end
       end
 
       vim.api.nvim_create_autocmd("LspAttach", {

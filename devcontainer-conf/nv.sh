@@ -5,11 +5,17 @@ set -euo pipefail
 # --- Исполняемый файл для запуска Neovim в Docker с автосборкой ---
 
 # --- Конфигурация ---
-IMAGE_NAME="my-dev-nvim"
+IMAGE_NAME="${NVIM_DOCKER_IMAGE:-my-dev-nvim}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 CALLER_CWD="$PWD"
 BUILD_CONTEXT="$SCRIPT_DIR"
 DOCKERFILE_PATH="$BUILD_CONTEXT/Dockerfile"
+REBUILD_IMAGE=0
+
+if [ "${1:-}" = "--rebuild" ]; then
+    REBUILD_IMAGE=1
+    shift
+fi
 
 if ! command -v docker >/dev/null 2>&1; then
     echo "❌ Ошибка: Docker не найден в PATH."
@@ -17,14 +23,18 @@ if ! command -v docker >/dev/null 2>&1; then
 fi
 
 mkdir -p \
-    "$BUILD_CONTEXT/local/share/nvim" \
-    "$BUILD_CONTEXT/local/state/nvim" \
-    "$BUILD_CONTEXT/cache/nvim"
+    "$BUILD_CONTEXT/local/share" \
+    "$BUILD_CONTEXT/local/state" \
+    "$BUILD_CONTEXT/cache"
 
 # --- 1. ПРОВЕРКА И СБОРКА ОБРАЗА ---
 echo "🔎 Проверяю наличие Docker-образа '$IMAGE_NAME'..."
 IMAGE_ID="$(docker images -q "$IMAGE_NAME")"
-if [ -z "$IMAGE_ID" ]; then
+if [ "$REBUILD_IMAGE" -eq 1 ]; then
+    echo "♻️  Принудительно пересобираю образ."
+    docker build --pull -t "$IMAGE_NAME" "$BUILD_CONTEXT"
+    echo -e "\n✅ Образ '$IMAGE_NAME' успешно пересобран."
+elif [ -z "$IMAGE_ID" ]; then
     echo "⚠️  Образ не найден. Требуется сборка."
     if [ ! -f "$DOCKERFILE_PATH" ]; then
         echo -e "\n❌ Ошибка: Dockerfile не найден в $DOCKERFILE_PATH"
@@ -60,9 +70,9 @@ sleep 1
 docker run -it --rm \
     -v "$PROJECT_PATH_ABSOLUTE:/home/dev/project" \
     -v "$BUILD_CONTEXT/config/nvim:/home/dev/.config/nvim" \
-    -v "$BUILD_CONTEXT/local/share/nvim:/home/dev/.local/share/nvim" \
-    -v "$BUILD_CONTEXT/local/state/nvim:/home/dev/.local/state/nvim" \
-    -v "$BUILD_CONTEXT/cache/nvim:/home/dev/.cache/nvim" \
+    -v "$BUILD_CONTEXT/local/share:/home/dev/.local/share" \
+    -v "$BUILD_CONTEXT/local/state:/home/dev/.local/state" \
+    -v "$BUILD_CONTEXT/cache:/home/dev/.cache" \
     "$IMAGE_NAME" nvim /home/dev/project
 
 echo -e "\n✅  **Работа завершена. Контейнер остановлен.**\n"

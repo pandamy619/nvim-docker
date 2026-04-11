@@ -1,103 +1,152 @@
-# Портативный Neovim в Docker
+# nvim-docker
 
-Этот репозиторий поднимает Neovim в контейнере и монтирует внутрь выбранный проект. Конфиг редактора хранится в `devcontainer-conf/config/nvim`, а локальные runtime-данные Neovim сохраняются рядом, но не коммитятся в git.
+[Русский](README.ru.md)
 
-## Что внутри
+Portable Neovim in Docker with an opinionated Lua config, built-in language servers, and a launcher that opens any project inside an isolated editor container.
 
-- Конфигурация на Lua
-- Менеджер плагинов `lazy.nvim`
-- Подсветка и парсеры через `nvim-treesitter`
-- LSP и автодополнение через `mason.nvim`, `mason-lspconfig.nvim` и `nvim-cmp`
-- Файловый менеджер `neo-tree.nvim`
-- Git-интеграция через `gitsigns.nvim` и `neogit`
-- Go-поддержка через `go.nvim` и `gopls`
+## Who This Is For
 
-## Требования
+- Developers who want a reproducible Neovim setup without installing local LSPs and toolchains.
+- Teams onboarding people onto mixed-language repositories.
+- People moving between machines who want the same editor behavior everywhere.
 
-- [Git](https://git-scm.com/)
-- [Docker](https://www.docker.com/)
+## What You Get
 
-## Первый запуск
+- Lua-based Neovim config
+- `lazy.nvim` plugin management
+- Treesitter highlighting and parsing
+- `nvim-lspconfig` + `nvim-cmp`
+- `neo-tree.nvim`, `gitsigns.nvim`, `neogit`
+- Go support through `go.nvim`, `gopls`, and `goimports`
+- Built-in language servers for Lua, Python, TypeScript, Go, Rust, and CSS
+
+## Supported Hosts
+
+- macOS with Docker Desktop
+- Linux with Docker Engine
+- `amd64` and `arm64` container builds
+
+## Quick Start
 
 ```bash
-git clone <repo-url>
+git clone git@github.com:pandamy619/nvim-docker.git
 cd nvim-docker
 ./devcontainer-conf/nv.sh
 ```
 
-По умолчанию скрипт открывает в контейнере текущую директорию.
+By default the launcher opens the current directory inside the container.
 
-Чтобы открыть другой проект, передайте путь явно:
+To open a different project:
 
 ```bash
-./devcontainer-conf/nv.sh /путь/к/проекту
+./devcontainer-conf/nv.sh /path/to/project
 ```
 
-При первом запуске Docker соберёт образ, а Neovim скачает плагины и нужные LSP-серверы в локальные игнорируемые директории `devcontainer-conf/local` и `devcontainer-conf/cache`.
+To force an image rebuild:
 
-## Основные горячие клавиши
+```bash
+./devcontainer-conf/nv.sh --rebuild /path/to/project
+```
 
-### Общие
+The launcher stores plugins, editor state, and caches in local ignored directories under `devcontainer-conf/local` and `devcontainer-conf/cache`.
 
-| Комбинация | Действие |
+To run the launcher against a prebuilt image instead of a local `my-dev-nvim` tag:
+
+```bash
+NVIM_DOCKER_IMAGE=ghcr.io/pandamy619/nvim-docker:v0.1.0 ./devcontainer-conf/nv.sh /path/to/project
+```
+
+## One-Command GHCR Run
+
+Once a tagged release is published to GHCR, you can run the image directly without cloning the repo config:
+
+```bash
+docker run --rm -it \
+  -v "$PWD:/home/dev/project" \
+  -v nvim-docker-share:/home/dev/.local/share \
+  -v nvim-docker-state:/home/dev/.local/state \
+  -v nvim-docker-cache:/home/dev/.cache \
+  ghcr.io/pandamy619/nvim-docker:v0.1.0 \
+  nvim /home/dev/project
+```
+
+The image already contains the Neovim config. The first run still needs network access to fetch plugins.
+
+## Included Keymaps
+
+### General
+
+| Key | Action |
 | :--- | :--- |
-| `Пробел` | Клавиша-лидер (`<leader>`) |
-| `<leader>w` | Сохранить файл |
-| `<leader>q` | Выйти из Neovim |
+| `Space` | Leader key |
+| `<leader>w` | Save file |
+| `<leader>q` | Quit Neovim |
 
-### Навигация
+### Navigation
 
-| Комбинация | Действие |
+| Key | Action |
 | :--- | :--- |
-| `Ctrl + h/j/k/l` | Перемещение между окнами |
+| `Ctrl + h/j/k/l` | Move between windows |
 
-### Плагины и Git
+### Plugins and Git
 
-| Комбинация | Действие |
+| Key | Action |
 | :--- | :--- |
-| `<leader>e` | Открыть или закрыть `neo-tree` |
-| `<leader>gg` | Открыть `Neogit` |
-| `]c` | Следующее изменение |
-| `[c` | Предыдущее изменение |
-| `<leader>hs` | Застейджить hunk |
-| `<leader>hr` | Откатить hunk |
-| `<leader>gb` | Показать blame для строки |
+| `<leader>e` | Toggle `neo-tree` |
+| `<leader>gg` | Open `Neogit` |
+| `]c` | Next hunk |
+| `[c` | Previous hunk |
+| `<leader>hs` | Stage hunk |
+| `<leader>hr` | Reset hunk |
+| `<leader>gb` | Show line blame |
 
-### Автодополнение
+### Completion
 
-| Комбинация | Действие |
+| Key | Action |
 | :--- | :--- |
-| `Ctrl + j/k` | Навигация по вариантам |
-| `Enter` | Подтвердить выбранный вариант |
+| `Ctrl + j/k` | Navigate completion items |
+| `Enter` | Confirm selected item |
 
 ### LSP
 
-| Комбинация | Действие |
+| Key | Action |
 | :--- | :--- |
-| `gd` | Перейти к определению |
-| `K` | Показать документацию |
-| `gi` | Перейти к реализации |
-| `<leader>rn` | Переименовать символ |
-| `<leader>ca` | Показать code actions |
+| `gd` | Go to definition |
+| `K` | Hover documentation |
+| `gi` | Go to implementation |
+| `<leader>rn` | Rename symbol |
+| `<leader>ca` | Code actions |
 
 ### Go
 
-| Комбинация | Действие |
+| Key | Action |
 | :--- | :--- |
-| `<leader>gt` | Запустить тест для текущей функции |
-| `<leader>gf` | Запустить тесты файла |
-| `<leader>gr` | Выполнить `go run` |
+| `<leader>gt` | Run current function test |
+| `<leader>gf` | Run file tests |
+| `<leader>gr` | Run `go run` |
 
-## Перенос готового образа
+## What Is Supported
 
-Сохранить образ:
+- Portable editor startup through [`devcontainer-conf/nv.sh`](devcontainer-conf/nv.sh)
+- Reproducible Docker build through [`devcontainer-conf/Dockerfile`](devcontainer-conf/Dockerfile)
+- Embedded fallback config inside the image for direct GHCR runs
+- Local overrides through bind-mounted config when using the launcher
 
-```bash
-docker save my-dev-nvim | gzip > my-nvim-image.tar.gz
-```
+## What Is Not Included
 
-Загрузить образ на другой машине:
+- Project-specific compilers, SDKs, or databases beyond the bundled editor tooling
+- Windows-native support
+- A full IDE or devcontainer replacement
+- Offline first-run plugin installation
 
-```bash
-docker load < my-nvim-image.tar.gz
-```
+## Known Issues
+
+- The image is intentionally not tiny. Expect roughly a 1.5 GB class image after build.
+- First startup downloads plugins and is noticeably slower.
+- This setup is opinionated. If you want a blank Neovim base, this repo is the wrong starting point.
+
+## Release Notes
+
+- See [CHANGELOG.md](CHANGELOG.md) for tagged changes.
+- CI builds and smoke-tests the Docker image on pushes and pull requests.
+- Tagged releases publish `ghcr.io/pandamy619/nvim-docker`.
