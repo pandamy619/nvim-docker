@@ -9,16 +9,43 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - base
+          - go
+          - web
+          - full
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate launcher script
-        run: bash -n devcontainer-conf/nv.sh
+      - name: Validate shell scripts
+        run: |
+          bash -n devcontainer-conf/nv.sh
+          bash -n devcontainer-conf/smoke-test.sh
+
+      - name: Validate devcontainer definitions
+        run: |
+          python3 -m json.tool .devcontainer/base/devcontainer.json > /dev/null
+          python3 -m json.tool .devcontainer/go/devcontainer.json > /dev/null
+          python3 -m json.tool .devcontainer/web/devcontainer.json > /dev/null
+          python3 -m json.tool .devcontainer/full/devcontainer.json > /dev/null
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
-        run: docker build -t my-dev-nvim ./devcontainer-conf
+        uses: docker/build-push-action@v6
+        with:
+          context: ./devcontainer-conf
+          target: ${{ matrix.target }}
+          tags: my-dev-nvim-${{ matrix.target }}:ci
+          load: true
+          cache-from: type=gha,scope=nvim-docker-${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=nvim-docker-${{ matrix.target }}
 
       - name: Smoke test Docker image
-        run: bash ./devcontainer-conf/smoke-test.sh my-dev-nvim
+        run: bash ./devcontainer-conf/smoke-test.sh my-dev-nvim-${{ matrix.target }}:ci ${{ matrix.target }}

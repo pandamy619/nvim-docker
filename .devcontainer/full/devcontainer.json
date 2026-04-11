@@ -1,0 +1,17 @@
+{
+  "name": "nvim-docker (full)",
+  "build": {
+    "context": "../../devcontainer-conf",
+    "dockerfile": "../../devcontainer-conf/Dockerfile",
+    "target": "full"
+  },
+  "remoteUser": "dev",
+  "overrideCommand": false,
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}

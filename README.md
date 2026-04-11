@@ -2,7 +2,7 @@
 
 [Русский](README.ru.md)
 
-Portable Neovim in Docker with an opinionated Lua config, built-in language servers, and a launcher that opens any project inside an isolated editor container.
+Portable Neovim in Docker with an opinionated Lua config, profile-based images, and a launcher that opens any project inside an isolated editor container.
 
 ## Who This Is For
 
@@ -18,13 +18,35 @@ Portable Neovim in Docker with an opinionated Lua config, built-in language serv
 - `nvim-lspconfig` + `nvim-cmp`
 - `neo-tree.nvim`, `gitsigns.nvim`, `neogit`
 - Go support through `go.nvim`, `gopls`, and `goimports`
-- Built-in language servers for Lua, Python, TypeScript, Go, Rust, and CSS
+- Profile-based images: `base`, `go`, `web`, `full`
+
+## Image Profiles
+
+| Profile | Includes | Local target | GHCR tag |
+| :--- | :--- | :--- | :--- |
+| `base` | `nvim`, `git`, `ripgrep`, embedded config | `base` | `latest-base` |
+| `go` | `base` + Go toolchain, `gopls`, `goimports` | `go` | `latest-go` |
+| `web` | `base` + Node runtime, `pyright`, TypeScript/CSS language servers | `web` | `latest-web` |
+| `full` | `go` + `web` + LuaLS + `rust-analyzer` + Python CLI tools | `full` | `latest` |
 
 ## Supported Hosts
 
 - macOS with Docker Desktop
 - Linux with Docker Engine
 - `amd64` and `arm64` container builds
+
+## Dev Containers and Codespaces
+
+This repo also ships four devcontainer definitions:
+
+- `.devcontainer/base/devcontainer.json`
+- `.devcontainer/go/devcontainer.json`
+- `.devcontainer/web/devcontainer.json`
+- `.devcontainer/full/devcontainer.json`
+
+In VS Code, use `Dev Containers: Reopen in Container` and pick the profile you want.
+
+In GitHub Codespaces, the same profiles are available when creating a codespace.
 
 ## Quick Start
 
@@ -48,12 +70,18 @@ To force an image rebuild:
 ./devcontainer-conf/nv.sh --rebuild /path/to/project
 ```
 
-The launcher stores plugins, editor state, and caches in local ignored directories under `devcontainer-conf/local` and `devcontainer-conf/cache`.
-
-To run the launcher against a prebuilt image instead of a local `my-dev-nvim` tag:
+To build and run a specific local profile:
 
 ```bash
-NVIM_DOCKER_IMAGE=ghcr.io/pandamy619/nvim-docker:v0.1.0 ./devcontainer-conf/nv.sh /path/to/project
+NVIM_DOCKER_TARGET=go ./devcontainer-conf/nv.sh /path/to/project
+```
+
+The launcher stores plugins, editor state, and caches in local ignored directories under `devcontainer-conf/local` and `devcontainer-conf/cache`.
+
+To run the launcher against a prebuilt GHCR image instead of a local build:
+
+```bash
+NVIM_DOCKER_IMAGE=ghcr.io/pandamy619/nvim-docker:latest-go ./devcontainer-conf/nv.sh /path/to/project
 ```
 
 ## One-Command GHCR Run
@@ -66,11 +94,18 @@ docker run --rm -it \
   -v nvim-docker-share:/home/dev/.local/share \
   -v nvim-docker-state:/home/dev/.local/state \
   -v nvim-docker-cache:/home/dev/.cache \
-  ghcr.io/pandamy619/nvim-docker:v0.1.0 \
+  ghcr.io/pandamy619/nvim-docker:latest \
   nvim /home/dev/project
 ```
 
 The image already contains the Neovim config. The first run still needs network access to fetch plugins.
+
+Available GHCR tags:
+
+- `ghcr.io/pandamy619/nvim-docker:latest`
+- `ghcr.io/pandamy619/nvim-docker:latest-base`
+- `ghcr.io/pandamy619/nvim-docker:latest-go`
+- `ghcr.io/pandamy619/nvim-docker:latest-web`
 
 ## Included Keymaps
 
@@ -129,6 +164,8 @@ The image already contains the Neovim config. The first run still needs network 
 
 - Portable editor startup through [`devcontainer-conf/nv.sh`](devcontainer-conf/nv.sh)
 - Reproducible Docker build through [`devcontainer-conf/Dockerfile`](devcontainer-conf/Dockerfile)
+- Multiple `.devcontainer` profiles for VS Code Dev Containers and GitHub Codespaces
+- Pinned official Neovim release binaries inside the image
 - Embedded fallback config inside the image for direct GHCR runs
 - Local overrides through bind-mounted config when using the launcher
 
@@ -136,17 +173,12 @@ The image already contains the Neovim config. The first run still needs network 
 
 - Project-specific compilers, SDKs, or databases beyond the bundled editor tooling
 - Windows-native support
-- A full IDE or devcontainer replacement
+- A full project dev environment with app-specific services bundled
 - Offline first-run plugin installation
-
-## Known Issues
-
-- The image is intentionally not tiny. Expect roughly a 1.5 GB class image after build.
-- First startup downloads plugins and is noticeably slower.
-- This setup is opinionated. If you want a blank Neovim base, this repo is the wrong starting point.
 
 ## Release Notes
 
 - See [CHANGELOG.md](CHANGELOG.md) for tagged changes.
-- CI builds and smoke-tests the Docker image on pushes and pull requests.
-- Tagged releases publish `ghcr.io/pandamy619/nvim-docker`.
+- CI builds and smoke-tests all image profiles through Docker Buildx.
+- Tagged releases publish multi-arch `amd64` and `arm64` images to `ghcr.io/pandamy619/nvim-docker`.
+- Tagged releases publish `ghcr.io/pandamy619/nvim-docker` with `latest`, `latest-base`, `latest-go`, and `latest-web`.

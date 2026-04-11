@@ -5,7 +5,29 @@ set -euo pipefail
 # --- Исполняемый файл для запуска Neovim в Docker с автосборкой ---
 
 # --- Конфигурация ---
-IMAGE_NAME="${NVIM_DOCKER_IMAGE:-my-dev-nvim}"
+IMAGE_TARGET="${NVIM_DOCKER_TARGET:-full}"
+DEFAULT_IMAGE_NAME="my-dev-nvim"
+CUSTOM_IMAGE=0
+
+case "$IMAGE_TARGET" in
+    base|go|web|full) ;;
+    *)
+        echo "❌ Ошибка: неподдерживаемый target '$IMAGE_TARGET'. Используйте один из: base, go, web, full."
+        exit 1
+        ;;
+esac
+
+if [ "$IMAGE_TARGET" != "full" ]; then
+    DEFAULT_IMAGE_NAME="${DEFAULT_IMAGE_NAME}-${IMAGE_TARGET}"
+fi
+
+if [ -n "${NVIM_DOCKER_IMAGE:-}" ]; then
+    IMAGE_NAME="$NVIM_DOCKER_IMAGE"
+    CUSTOM_IMAGE=1
+else
+    IMAGE_NAME="$DEFAULT_IMAGE_NAME"
+fi
+
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 CALLER_CWD="$PWD"
 BUILD_CONTEXT="$SCRIPT_DIR"
@@ -30,22 +52,38 @@ mkdir -p \
 # --- 1. ПРОВЕРКА И СБОРКА ОБРАЗА ---
 echo "🔎 Проверяю наличие Docker-образа '$IMAGE_NAME'..."
 IMAGE_ID="$(docker images -q "$IMAGE_NAME")"
-if [ "$REBUILD_IMAGE" -eq 1 ]; then
-    echo "♻️  Принудительно пересобираю образ."
-    docker build --pull -t "$IMAGE_NAME" "$BUILD_CONTEXT"
-    echo -e "\n✅ Образ '$IMAGE_NAME' успешно пересобран."
-elif [ -z "$IMAGE_ID" ]; then
-    echo "⚠️  Образ не найден. Требуется сборка."
-    if [ ! -f "$DOCKERFILE_PATH" ]; then
-        echo -e "\n❌ Ошибка: Dockerfile не найден в $DOCKERFILE_PATH"
+if [ "$CUSTOM_IMAGE" -eq 1 ]; then
+    if [ "$REBUILD_IMAGE" -eq 1 ]; then
+        echo "❌ Ошибка: --rebuild нельзя использовать вместе с NVIM_DOCKER_IMAGE."
         exit 1
     fi
 
-    echo -e "\n🔧 Начинаю сборку образа..."
-    docker build -t "$IMAGE_NAME" "$BUILD_CONTEXT"
-    echo -e "\n✅ Образ '$IMAGE_NAME' успешно собран."
+    if [ -z "$IMAGE_ID" ]; then
+        echo "📦 Локально образ не найден. Пытаюсь скачать '$IMAGE_NAME'..."
+        docker pull "$IMAGE_NAME"
+        echo -e "\n✅ Образ '$IMAGE_NAME' успешно загружен."
+    else
+        echo "✅ Пользовательский образ найден локально. Пропускаю загрузку."
+    fi
 else
-    echo "✅ Образ найден. Пропускаю сборку."
+    echo "🧱 Использую локальный target: $IMAGE_TARGET"
+    if [ "$REBUILD_IMAGE" -eq 1 ]; then
+        echo "♻️  Принудительно пересобираю образ."
+        docker build --pull --target "$IMAGE_TARGET" -t "$IMAGE_NAME" "$BUILD_CONTEXT"
+        echo -e "\n✅ Образ '$IMAGE_NAME' успешно пересобран."
+    elif [ -z "$IMAGE_ID" ]; then
+        echo "⚠️  Образ не найден. Требуется сборка."
+        if [ ! -f "$DOCKERFILE_PATH" ]; then
+            echo -e "\n❌ Ошибка: Dockerfile не найден в $DOCKERFILE_PATH"
+            exit 1
+        fi
+
+        echo -e "\n🔧 Начинаю сборку образа..."
+        docker build --target "$IMAGE_TARGET" -t "$IMAGE_NAME" "$BUILD_CONTEXT"
+        echo -e "\n✅ Образ '$IMAGE_NAME' успешно собран."
+    else
+        echo "✅ Образ найден. Пропускаю сборку."
+    fi
 fi
 
 # --- 2. ОПРЕДЕЛЕНИЕ ПУТИ К ПРОЕКТУ И ЗАПУСК ---

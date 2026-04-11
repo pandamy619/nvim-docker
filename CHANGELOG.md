@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Split the Docker image into `base`, `go`, `web`, and `full` profiles.
+- Added CI and release matrix builds for all image profiles.
+- Added launcher support for selecting a local build target or pulling a prebuilt GHCR image.
+- Added `.devcontainer` profiles for `base`, `go`, `web`, and `full`.
+- Switched Neovim installation from a source build to pinned official release tarballs.
+- Upgraded GitHub Actions to Buildx-based multi-arch publishing with GitHub cache reuse.
+
 ## v0.1.0 - 2026-04-11
 
 - Stabilized the Docker launcher and stopped tracking local Neovim runtime state.

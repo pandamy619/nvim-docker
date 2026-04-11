@@ -1,24 +1,27 @@
 # syntax=docker/dockerfile:1
 
-FROM ubuntu:22.04 AS nvim-builder
+FROM ubuntu:22.04 AS nvim-assets-builder
 
 ENV DEBIAN_FRONTEND=noninteractive
-ARG NVIM_REF=7ac5a26d5633a41d7e291141488ca635242973a5
+ARG TARGETARCH
+ARG NVIM_VERSION=v0.12.1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
     ca-certificates \
-    cmake \
     curl \
-    gettext \
-    git \
-    ninja-build \
-    unzip && \
+    gzip \
+    tar && \
     rm -rf /var/lib/apt/lists/*
 
-RUN git clone --filter=blob:none https://github.com/neovim/neovim.git /tmp/neovim && \
-    git -C /tmp/neovim checkout "${NVIM_REF}" && \
-    make -C /tmp/neovim CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX=/opt/nvim install
+RUN case "${TARGETARCH}" in \
+        amd64) NVIM_ARCH="x86_64" ;; \
+        arm64) NVIM_ARCH="arm64" ;; \
+        *) echo "Unsupported TARGETARCH: ${TARGETARCH}" && exit 1 ;; \
+    esac && \
+    curl -fsSL "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-${NVIM_ARCH}.tar.gz" -o /tmp/nvim.tar.gz && \
+    mkdir -p /opt/nvim && \
+    tar -C /opt/nvim --strip-components=1 -xzf /tmp/nvim.tar.gz && \
+    rm /tmp/nvim.tar.gz
 
 
 FROM golang:1.25 AS go-tools-builder
@@ -80,7 +83,7 @@ RUN case "${TARGETARCH}" in \
     rm /tmp/rust-analyzer
 
 
-FROM ubuntu:22.04
+FROM ubuntu:22.04 AS runtime-common
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -88,24 +91,59 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
     git \
-    python3 \
-    python3-pip \
     ripgrep && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=nvim-builder /opt/nvim /opt/nvim
-COPY --from=go-tools-builder /usr/local/go /usr/local/go
-COPY --from=go-tools-builder /go/bin/gopls /usr/local/bin/gopls
-COPY --from=go-tools-builder /go/bin/goimports /usr/local/bin/goimports
-COPY --from=node-tools-builder /usr/bin/node /usr/local/bin/node
-COPY --from=node-tools-builder /usr/lib/node_modules /usr/lib/node_modules
-COPY --from=lsp-assets-builder /opt/lua-language-server /opt/lua-language-server
-COPY --from=lsp-assets-builder /opt/rust-analyzer /usr/local/bin/rust-analyzer
+COPY --from=nvim-assets-builder /opt/nvim /opt/nvim
 COPY config/nvim /tmp/nvim-config
 
 RUN ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim && \
-    ln -sf /opt/lua-language-server/bin/lua-language-server /usr/local/bin/lua-language-server && \
-    printf '%s\n' '#!/usr/bin/env sh' 'exec node /usr/lib/node_modules/pyright/index.js "$@"' > /usr/local/bin/pyright && \
+    useradd -ms /bin/bash dev && \
+    mkdir -p \
+      /home/dev/.cache \
+      /home/dev/.config \
+      /home/dev/.local/share \
+      /home/dev/.local/state \
+      /home/dev/go && \
+    cp -R /tmp/nvim-config /home/dev/.config/nvim && \
+    rm -rf /tmp/nvim-config && \
+    chown -R dev:dev /home/dev
+
+FROM runtime-common AS base
+
+USER dev
+WORKDIR /home/dev
+
+ENV XDG_CACHE_HOME=/home/dev/.cache
+ENV XDG_DATA_HOME=/home/dev/.local/share
+ENV XDG_STATE_HOME=/home/dev/.local/state
+
+CMD ["bash"]
+
+FROM runtime-common AS go
+
+COPY --from=go-tools-builder /usr/local/go /usr/local/go
+COPY --from=go-tools-builder /go/bin/gopls /usr/local/bin/gopls
+COPY --from=go-tools-builder /go/bin/goimports /usr/local/bin/goimports
+
+USER dev
+WORKDIR /home/dev
+
+ENV XDG_CACHE_HOME=/home/dev/.cache
+ENV XDG_DATA_HOME=/home/dev/.local/share
+ENV XDG_STATE_HOME=/home/dev/.local/state
+ENV GOPATH=/home/dev/go
+ENV GOCACHE=/home/dev/.cache/go-build
+ENV PATH="/usr/local/go/bin:/home/dev/go/bin:${PATH}"
+
+CMD ["bash"]
+
+FROM runtime-common AS web
+
+COPY --from=node-tools-builder /usr/bin/node /usr/local/bin/node
+COPY --from=node-tools-builder /usr/lib/node_modules /usr/lib/node_modules
+
+RUN printf '%s\n' '#!/usr/bin/env sh' 'exec node /usr/lib/node_modules/pyright/index.js "$@"' > /usr/local/bin/pyright && \
     printf '%s\n' '#!/usr/bin/env sh' 'exec node /usr/lib/node_modules/pyright/langserver.index.js "$@"' > /usr/local/bin/pyright-langserver && \
     printf '%s\n' '#!/usr/bin/env sh' 'exec node /usr/lib/node_modules/typescript-language-server/lib/cli.mjs "$@"' > /usr/local/bin/typescript-language-server && \
     printf '%s\n' '#!/usr/bin/env sh' 'exec node /usr/lib/node_modules/typescript/bin/tsserver "$@"' > /usr/local/bin/tsserver && \
@@ -117,19 +155,33 @@ RUN ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim && \
       /usr/local/bin/tsserver \
       /usr/local/bin/vscode-css-language-server
 
-RUN pip3 install --no-cache-dir --upgrade pip pynvim && \
-    pip3 install --no-cache-dir pyflakes black isort
+USER dev
+WORKDIR /home/dev
 
-RUN useradd -ms /bin/bash dev && \
-    mkdir -p \
-      /home/dev/.cache \
-      /home/dev/.config \
-      /home/dev/.local/share \
-      /home/dev/.local/state \
-      /home/dev/go && \
-    cp -R /tmp/nvim-config /home/dev/.config/nvim && \
-    rm -rf /tmp/nvim-config && \
-    chown -R dev:dev /home/dev
+ENV XDG_CACHE_HOME=/home/dev/.cache
+ENV XDG_DATA_HOME=/home/dev/.local/share
+ENV XDG_STATE_HOME=/home/dev/.local/state
+
+CMD ["bash"]
+
+FROM web AS full
+
+USER root
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=go-tools-builder /usr/local/go /usr/local/go
+COPY --from=go-tools-builder /go/bin/gopls /usr/local/bin/gopls
+COPY --from=go-tools-builder /go/bin/goimports /usr/local/bin/goimports
+COPY --from=lsp-assets-builder /opt/lua-language-server /opt/lua-language-server
+COPY --from=lsp-assets-builder /opt/rust-analyzer /usr/local/bin/rust-analyzer
+
+RUN ln -sf /opt/lua-language-server/bin/lua-language-server /usr/local/bin/lua-language-server && \
+    pip3 install --no-cache-dir --upgrade pip pynvim && \
+    pip3 install --no-cache-dir pyflakes black isort
 
 USER dev
 WORKDIR /home/dev

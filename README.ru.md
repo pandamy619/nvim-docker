@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-Портативный Neovim в Docker с opinionated Lua-конфигом, встроенными language server'ами и launcher-скриптом, который открывает любой проект в изолированном контейнере.
+Портативный Neovim в Docker с opinionated Lua-конфигом, profile-based образами и launcher-скриптом, который открывает любой проект в изолированном контейнере.
 
 ## Для Кого Это
 
@@ -18,13 +18,35 @@
 - `nvim-lspconfig` + `nvim-cmp`
 - `neo-tree.nvim`, `gitsigns.nvim`, `neogit`
 - Go-поддержка через `go.nvim`, `gopls` и `goimports`
-- Встроенные language server'ы для Lua, Python, TypeScript, Go, Rust и CSS
+- Профили образов: `base`, `go`, `web`, `full`
+
+## Профили Образов
+
+| Профиль | Что входит | Local target | GHCR tag |
+| :--- | :--- | :--- | :--- |
+| `base` | `nvim`, `git`, `ripgrep`, встроенный конфиг | `base` | `latest-base` |
+| `go` | `base` + Go toolchain, `gopls`, `goimports` | `go` | `latest-go` |
+| `web` | `base` + Node runtime, `pyright`, TypeScript/CSS language server'ы | `web` | `latest-web` |
+| `full` | `go` + `web` + LuaLS + `rust-analyzer` + Python CLI tools | `full` | `latest` |
 
 ## Поддерживаемые Хосты
 
 - macOS с Docker Desktop
 - Linux с Docker Engine
 - Контейнерные сборки для `amd64` и `arm64`
+
+## Dev Containers и Codespaces
+
+В репозитории также есть четыре devcontainer-конфига:
+
+- `.devcontainer/base/devcontainer.json`
+- `.devcontainer/go/devcontainer.json`
+- `.devcontainer/web/devcontainer.json`
+- `.devcontainer/full/devcontainer.json`
+
+В VS Code можно выбрать `Dev Containers: Reopen in Container` и нужный профиль.
+
+В GitHub Codespaces эти же профили доступны при создании codespace.
 
 ## Быстрый Старт
 
@@ -48,12 +70,18 @@ cd nvim-docker
 ./devcontainer-conf/nv.sh --rebuild /путь/к/проекту
 ```
 
-Launcher хранит плагины, editor state и cache в локальных игнорируемых директориях `devcontainer-conf/local` и `devcontainer-conf/cache`.
-
-Чтобы использовать launcher поверх уже опубликованного image, а не локального `my-dev-nvim`:
+Чтобы собрать и запустить конкретный локальный профиль:
 
 ```bash
-NVIM_DOCKER_IMAGE=ghcr.io/pandamy619/nvim-docker:v0.1.0 ./devcontainer-conf/nv.sh /путь/к/проекту
+NVIM_DOCKER_TARGET=go ./devcontainer-conf/nv.sh /путь/к/проекту
+```
+
+Launcher хранит плагины, editor state и cache в локальных игнорируемых директориях `devcontainer-conf/local` и `devcontainer-conf/cache`.
+
+Чтобы использовать launcher поверх уже опубликованного GHCR image, а не локальной сборки:
+
+```bash
+NVIM_DOCKER_IMAGE=ghcr.io/pandamy619/nvim-docker:latest-go ./devcontainer-conf/nv.sh /путь/к/проекту
 ```
 
 ## Запуск Через GHCR Одной Командой
@@ -66,11 +94,18 @@ docker run --rm -it \
   -v nvim-docker-share:/home/dev/.local/share \
   -v nvim-docker-state:/home/dev/.local/state \
   -v nvim-docker-cache:/home/dev/.cache \
-  ghcr.io/pandamy619/nvim-docker:v0.1.0 \
+  ghcr.io/pandamy619/nvim-docker:latest \
   nvim /home/dev/project
 ```
 
 Конфиг Neovim уже встроен в image. На первом запуске всё равно нужен интернет для загрузки плагинов.
+
+Доступные GHCR теги:
+
+- `ghcr.io/pandamy619/nvim-docker:latest`
+- `ghcr.io/pandamy619/nvim-docker:latest-base`
+- `ghcr.io/pandamy619/nvim-docker:latest-go`
+- `ghcr.io/pandamy619/nvim-docker:latest-web`
 
 ## Основные Горячие Клавиши
 
@@ -129,6 +164,8 @@ docker run --rm -it \
 
 - Портативный запуск редактора через [`devcontainer-conf/nv.sh`](devcontainer-conf/nv.sh)
 - Воспроизводимая Docker-сборка через [`devcontainer-conf/Dockerfile`](devcontainer-conf/Dockerfile)
+- Несколько `.devcontainer`-профилей для VS Code Dev Containers и GitHub Codespaces
+- Pin на официальный Neovim release binary внутри образа
 - Встроенный fallback-конфиг внутри image для прямого запуска из GHCR
 - Локальные override'ы через bind mount конфига при использовании launcher
 
@@ -136,17 +173,12 @@ docker run --rm -it \
 
 - Проект-специфичных компиляторов, SDK и баз данных кроме встроенного editor tooling
 - Нативной поддержки Windows
-- Полноценной замены IDE или devcontainer
+- Полноценного project dev environment со встроенными сервисами приложения
 - Полностью offline первого запуска
-
-## Известные Ограничения
-
-- Образ специально не “микроскопический”. Ожидай размер порядка 1.5 GB.
-- Первый запуск заметно медленнее из-за загрузки плагинов.
-- Конфиг намеренно opinionated. Если нужен чистый Neovim baseline, этот репозиторий не лучший старт.
 
 ## Релизная Информация
 
 - История релизов лежит в [CHANGELOG.md](CHANGELOG.md).
-- CI собирает и smoke-test'ит Docker image на push и pull request.
-- Тегированные релизы публикуют `ghcr.io/pandamy619/nvim-docker`.
+- CI собирает и smoke-test'ит все профили образов через Docker Buildx.
+- Тегированные релизы публикуют multi-arch образы `amd64` и `arm64` в `ghcr.io/pandamy619/nvim-docker`.
+- Тегированные релизы публикуют `ghcr.io/pandamy619/nvim-docker` с тегами `latest`, `latest-base`, `latest-go` и `latest-web`.

@@ -1,0 +1,17 @@
+{
+  "name": "nvim-docker (go)",
+  "build": {
+    "context": "../../devcontainer-conf",
+    "dockerfile": "../../devcontainer-conf/Dockerfile",
+    "target": "go"
+  },
+  "remoteUser": "dev",
+  "overrideCommand": false,
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}
