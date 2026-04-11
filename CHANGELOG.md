@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v0.2.0 - 2026-04-11
 
 - Split the Docker image into `base`, `go`, `web`, and `full` profiles.
 - Added CI and release matrix builds for all image profiles.
