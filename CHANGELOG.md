@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Added a `release-check.yml` workflow so the Release badge reflects branch health instead of a tag-only publish workflow.
+- Renamed the tag-triggered workflow to `Publish Release` to distinguish publishing from release validation.
+
 ## v0.2.0 - 2026-04-11
 
 - Split the Docker image into `base`, `go`, `web`, and `full` profiles.

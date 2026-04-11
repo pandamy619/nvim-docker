@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  release-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: base
+          - target: go
+          - target: web
+          - target: full
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build release candidate image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./devcontainer-conf
+          target: ${{ matrix.target }}
+          tags: local/my-dev-nvim-${{ matrix.target }}:release-check
+          load: true
+          cache-from: type=gha,scope=nvim-docker-${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=nvim-docker-${{ matrix.target }}
+
+      - name: Smoke test release candidate image
+        run: bash ./devcontainer-conf/smoke-test.sh local/my-dev-nvim-${{ matrix.target }}:release-check ${{ matrix.target }}

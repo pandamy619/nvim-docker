@@ -1,7 +1,7 @@
 # nvim-docker
 
 [![CI](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml)
-[![Release](https://github.com/pandamy619/nvim-docker/actions/workflows/release.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/release.yml)
+[![Release](https://github.com/pandamy619/nvim-docker/actions/workflows/release-check.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/release-check.yml)
 [![GHCR](https://img.shields.io/badge/GHCR-package-blue?logo=github)](https://github.com/pandamy619/nvim-docker/pkgs/container/nvim-docker)
 
 [English](README.md)
