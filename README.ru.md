@@ -72,6 +72,7 @@
 В GitHub Codespaces эти же профили доступны при создании codespace.
 
 У каждого профиля есть небольшой `onCreateCommand`, который один раз делает `Lazy sync`. Это делает конфиг совместимым с Codespaces prebuild.
+У каждого профиля также включён `overrideCommand: true`, чтобы Dev Containers не завершал контейнер сразу после image `CMD`.
 
 Примечание про prebuild:
 - GitHub Codespaces prebuild включается в настройках репозитория, а не через tracked файл в git.

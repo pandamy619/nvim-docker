@@ -6,7 +6,7 @@
     "target": "web"
   },
   "remoteUser": "dev",
-  "overrideCommand": false,
+  "overrideCommand": true,
   "onCreateCommand": "sh -lc \"nvim --headless '+Lazy! sync' +qa || true\"",
   "customizations": {
     "vscode": {

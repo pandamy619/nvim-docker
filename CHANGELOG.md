@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Added `.devcontainer` profiles for `base`, `go`, `web`, and `full`.
 - Added a default `.devcontainer/devcontainer.json` that points to the `full` profile.
 - Added prebuild-friendly devcontainer bootstrap via `onCreateCommand` for initial `Lazy sync`.
+- Fixed devcontainer startup by enabling `overrideCommand: true` for all profiles.
 - Switched Neovim installation from a source build to pinned official release tarballs.
 - Upgraded GitHub Actions to Buildx-based multi-arch publishing with GitHub cache reuse.
 - Added CI/GHCR badges and a faster "30-second start" README entry.

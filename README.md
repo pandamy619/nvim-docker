@@ -72,6 +72,7 @@ In VS Code, use `Dev Containers: Reopen in Container` and pick the profile you w
 In GitHub Codespaces, the same profiles are available when creating a codespace.
 
 Each profile runs a small `onCreateCommand` that performs `Lazy sync` once. That makes the setup compatible with Codespaces prebuilds.
+Each profile also sets `overrideCommand: true`, so Dev Containers keeps the workspace container alive instead of exiting after the image `CMD`.
 
 Prebuild note:
 - GitHub Codespaces prebuilds are enabled in repository settings, not through a tracked repository file.
