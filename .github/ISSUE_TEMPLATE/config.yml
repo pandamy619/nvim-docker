@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage and setup docs
+    url: https://github.com/pandamy619/nvim-docker/blob/main/README.md
+    about: Check the README before opening a usage question.
+  - name: Contribution and version policy
+    url: https://github.com/pandamy619/nvim-docker/blob/main/CONTRIBUTING.md
+    about: Read the contribution process and version policy before proposing changes.

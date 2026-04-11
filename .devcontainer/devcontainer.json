@@ -7,7 +7,7 @@
   },
   "remoteUser": "dev",
   "overrideCommand": false,
-  "postCreateCommand": "sh -lc \"nvim --headless '+Lazy! sync' +qa || true\"",
+  "onCreateCommand": "sh -lc \"nvim --headless '+Lazy! sync' +qa || true\"",
   "customizations": {
     "vscode": {
       "settings": {

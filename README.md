@@ -33,6 +33,17 @@ Portable Neovim in Docker with an opinionated Lua config, profile-based images, 
 | `web` | `base` + Node runtime, `pyright`, TypeScript/CSS language servers | `web` | `latest-web` |
 | `full` | `go` + `web` + LuaLS + `rust-analyzer` + Python CLI tools | `full` | `latest` |
 
+## Profile Comparison
+
+Approximate values below are expectations based on the current Dockerfile composition. Actual numbers depend on host performance, network speed, and whether plugin caches are already warm.
+
+| Profile | Best for | Approx. image size | Approx. first open | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `base` | minimal editing and generic repos | `0.4-0.6 GB` | `20-40 sec` | smallest image, no language-specific runtimes |
+| `go` | Go-heavy repositories | `0.7-0.9 GB` | `30-60 sec` | includes `go`, `gopls`, and `goimports` |
+| `web` | TypeScript, CSS, and Python-adjacent repos | `0.6-0.8 GB` | `30-60 sec` | includes `node`, `pyright`, and TypeScript/CSS language servers |
+| `full` | mixed-language repos and default Codespaces usage | `1.3-1.5 GB` | `45-90 sec` | largest image, broadest built-in tooling |
+
 ## Supported Hosts
 
 - macOS with Docker Desktop
@@ -42,7 +53,7 @@ Portable Neovim in Docker with an opinionated Lua config, profile-based images, 
 ## 30-Second Start
 
 - Local launcher: run `./devcontainer-conf/nv.sh`
-- VS Code / Codespaces: the default [`.devcontainer/devcontainer.json`](/Users/vladtagaev/MYPROJECT/nvim-docker/.devcontainer/devcontainer.json) opens the `full` profile
+- VS Code / Codespaces: the default [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json) opens the `full` profile
 - Alternative profiles: choose `.devcontainer/base`, `.devcontainer/go`, `.devcontainer/web`, or `.devcontainer/full`
 - Prebuilt image: run `NVIM_DOCKER_IMAGE=ghcr.io/pandamy619/nvim-docker:latest ./devcontainer-conf/nv.sh`
 
@@ -60,7 +71,12 @@ In VS Code, use `Dev Containers: Reopen in Container` and pick the profile you w
 
 In GitHub Codespaces, the same profiles are available when creating a codespace.
 
-Each profile runs a small `postCreateCommand` that performs `Lazy sync` once, so the editor is less raw on first open.
+Each profile runs a small `onCreateCommand` that performs `Lazy sync` once. That makes the setup compatible with Codespaces prebuilds.
+
+Prebuild note:
+- GitHub Codespaces prebuilds are enabled in repository settings, not through a tracked repository file.
+- The repository is prepared for prebuilds and the default recommendation is `.devcontainer/devcontainer.json`.
+- See [docs/CODESPACES_PREBUILD.md](docs/CODESPACES_PREBUILD.md) for the exact manual enablement steps.
 
 ## Quick Start
 
@@ -193,6 +209,6 @@ Available GHCR tags:
 ## Release Notes
 
 - See [CHANGELOG.md](CHANGELOG.md) for tagged changes.
-- CI builds and smoke-tests all image profiles through Docker Buildx.
+- CI validates the repository and runs real devcontainer smoke tests for the default profile plus all profile-specific alternatives.
 - Tagged releases publish multi-arch `amd64` and `arm64` images to `ghcr.io/pandamy619/nvim-docker`.
 - Tagged releases publish `ghcr.io/pandamy619/nvim-docker` with `latest`, `latest-base`, `latest-go`, and `latest-web`.

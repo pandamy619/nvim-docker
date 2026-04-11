@@ -7,16 +7,8 @@ on:
   pull_request:
 
 jobs:
-  docker:
+  static:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-          - base
-          - go
-          - web
-          - full
 
     steps:
       - name: Checkout
@@ -26,6 +18,7 @@ jobs:
         run: |
           bash -n devcontainer-conf/nv.sh
           bash -n devcontainer-conf/smoke-test.sh
+          bash -n devcontainer-conf/devcontainer-ci-smoke-test.sh
 
       - name: Validate devcontainer definitions
         run: |
@@ -35,18 +28,48 @@ jobs:
           python3 -m json.tool .devcontainer/web/devcontainer.json > /dev/null
           python3 -m json.tool .devcontainer/full/devcontainer.json > /dev/null
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Validate tracked markdown docs
+        run: |
+          test -f CONTRIBUTING.md
+          test -f docs/VERSION_POLICY.md
+          test -f docs/CODESPACES_PREBUILD.md
 
-      - name: Build Docker image
-        uses: docker/build-push-action@v6
+      - name: Validate issue templates
+        run: |
+          test -f .github/ISSUE_TEMPLATE/bug_report.yml
+          test -f .github/ISSUE_TEMPLATE/feature_request.yml
+          test -f .github/ISSUE_TEMPLATE/config.yml
+
+  devcontainer-flow:
+    runs-on: ubuntu-latest
+    needs: static
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: default
+            config: .devcontainer/devcontainer.json
+            profile: full
+          - name: base
+            config: .devcontainer/base/devcontainer.json
+            profile: base
+          - name: go
+            config: .devcontainer/go/devcontainer.json
+            profile: go
+          - name: web
+            config: .devcontainer/web/devcontainer.json
+            profile: web
+          - name: full
+            config: .devcontainer/full/devcontainer.json
+            profile: full
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run devcontainer smoke test
+        uses: devcontainers/ci@v0.3
         with:
-          context: ./devcontainer-conf
-          target: ${{ matrix.target }}
-          tags: my-dev-nvim-${{ matrix.target }}:ci
-          load: true
-          cache-from: type=gha,scope=nvim-docker-${{ matrix.target }}
-          cache-to: type=gha,mode=max,scope=nvim-docker-${{ matrix.target }}
-
-      - name: Smoke test Docker image
-        run: bash ./devcontainer-conf/smoke-test.sh my-dev-nvim-${{ matrix.target }}:ci ${{ matrix.target }}
+          configFile: ${{ matrix.config }}
+          push: never
+          runCmd: bash ./devcontainer-conf/devcontainer-ci-smoke-test.sh ${{ matrix.profile }}

@@ -1,0 +1,61 @@
+name: Bug report
+description: Report broken behavior in the launcher, image profiles, CI, or editor setup
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is broken?
+    validations:
+      required: true
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Affected profile
+      options:
+        - base
+        - go
+        - web
+        - full
+        - unknown
+    validations:
+      required: true
+  - type: dropdown
+    id: entrypoint
+    attributes:
+      label: How did you run it?
+      options:
+        - nv.sh launcher
+        - VS Code Dev Containers
+        - GitHub Codespaces
+        - direct docker run
+        - CI workflow
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include exact commands when possible
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste launcher output, CI logs, or Neovim/LSP logs if available

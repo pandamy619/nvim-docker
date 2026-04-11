@@ -9,10 +9,13 @@ All notable changes to this project will be documented in this file.
 - Added launcher support for selecting a local build target or pulling a prebuilt GHCR image.
 - Added `.devcontainer` profiles for `base`, `go`, `web`, and `full`.
 - Added a default `.devcontainer/devcontainer.json` that points to the `full` profile.
-- Added lightweight devcontainer bootstrap via `postCreateCommand` for initial `Lazy sync`.
+- Added prebuild-friendly devcontainer bootstrap via `onCreateCommand` for initial `Lazy sync`.
 - Switched Neovim installation from a source build to pinned official release tarballs.
 - Upgraded GitHub Actions to Buildx-based multi-arch publishing with GitHub cache reuse.
 - Added CI/GHCR badges and a faster "30-second start" README entry.
+- Reworked CI to validate real devcontainer flows through `devcontainers/ci`.
+- Added contributor docs, issue templates, and a version update policy.
+- Added approximate profile comparison tables to both READMEs.
 
 ## v0.1.0 - 2026-04-11
 

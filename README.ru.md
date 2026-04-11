@@ -33,6 +33,17 @@
 | `web` | `base` + Node runtime, `pyright`, TypeScript/CSS language server'ы | `web` | `latest-web` |
 | `full` | `go` + `web` + LuaLS + `rust-analyzer` + Python CLI tools | `full` | `latest` |
 
+## Сравнение Профилей
+
+Числа ниже приблизительные и выведены из текущего состава Dockerfile. Фактические значения зависят от машины, сети и того, прогреты ли plugin cache.
+
+| Профиль | Для чего лучше всего | Примерный размер образа | Примерное первое открытие | Комментарий |
+| :--- | :--- | :--- | :--- | :--- |
+| `base` | минимальный editing и обычные репозитории | `0.4-0.6 GB` | `20-40 sec` | самый маленький образ, без language-specific runtime |
+| `go` | Go-репозитории | `0.7-0.9 GB` | `30-60 sec` | включает `go`, `gopls` и `goimports` |
+| `web` | TypeScript, CSS и Python-adjacent репозитории | `0.6-0.8 GB` | `30-60 sec` | включает `node`, `pyright` и TypeScript/CSS language server'ы |
+| `full` | mixed-language репозитории и дефолтный Codespaces сценарий | `1.3-1.5 GB` | `45-90 sec` | самый тяжёлый образ, но и самый полный |
+
 ## Поддерживаемые Хосты
 
 - macOS с Docker Desktop
@@ -42,7 +53,7 @@
 ## Старт За 30 Секунд
 
 - Локальный launcher: `./devcontainer-conf/nv.sh`
-- VS Code / Codespaces: дефолтный [`.devcontainer/devcontainer.json`](/Users/vladtagaev/MYPROJECT/nvim-docker/.devcontainer/devcontainer.json) открывает профиль `full`
+- VS Code / Codespaces: дефолтный [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json) открывает профиль `full`
 - Альтернативные профили: `.devcontainer/base`, `.devcontainer/go`, `.devcontainer/web`, `.devcontainer/full`
 - Готовый образ: `NVIM_DOCKER_IMAGE=ghcr.io/pandamy619/nvim-docker:latest ./devcontainer-conf/nv.sh`
 
@@ -60,7 +71,12 @@
 
 В GitHub Codespaces эти же профили доступны при создании codespace.
 
-У каждого профиля есть небольшой `postCreateCommand`, который один раз делает `Lazy sync`, чтобы на первом открытии редактор был не таким “сырым”.
+У каждого профиля есть небольшой `onCreateCommand`, который один раз делает `Lazy sync`. Это делает конфиг совместимым с Codespaces prebuild.
+
+Примечание про prebuild:
+- GitHub Codespaces prebuild включается в настройках репозитория, а не через tracked файл в git.
+- Репозиторий уже подготовлен к prebuild, а дефолтная рекомендация это `.devcontainer/devcontainer.json`.
+- Точные ручные шаги вынесены в [docs/CODESPACES_PREBUILD.md](docs/CODESPACES_PREBUILD.md).
 
 ## Быстрый Старт
 
@@ -193,6 +209,6 @@ docker run --rm -it \
 ## Релизная Информация
 
 - История релизов лежит в [CHANGELOG.md](CHANGELOG.md).
-- CI собирает и smoke-test'ит все профили образов через Docker Buildx.
+- CI валидирует репозиторий и прогоняет реальные devcontainer smoke-test'ы для дефолтного профиля и всех профильных альтернатив.
 - Тегированные релизы публикуют multi-arch образы `amd64` и `arm64` в `ghcr.io/pandamy619/nvim-docker`.
 - Тегированные релизы публикуют `ghcr.io/pandamy619/nvim-docker` с тегами `latest`, `latest-base`, `latest-go` и `latest-web`.
