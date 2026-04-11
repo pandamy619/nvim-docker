@@ -1,5 +1,9 @@
 # nvim-docker
 
+[![CI](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml)
+[![Release](https://github.com/pandamy619/nvim-docker/actions/workflows/release.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/release.yml)
+[![GHCR](https://img.shields.io/badge/GHCR-package-blue?logo=github)](https://github.com/pandamy619/nvim-docker/pkgs/container/nvim-docker)
+
 [Русский](README.ru.md)
 
 Portable Neovim in Docker with an opinionated Lua config, profile-based images, and a launcher that opens any project inside an isolated editor container.
@@ -35,10 +39,18 @@ Portable Neovim in Docker with an opinionated Lua config, profile-based images, 
 - Linux with Docker Engine
 - `amd64` and `arm64` container builds
 
+## 30-Second Start
+
+- Local launcher: run `./devcontainer-conf/nv.sh`
+- VS Code / Codespaces: the default [`.devcontainer/devcontainer.json`](/Users/vladtagaev/MYPROJECT/nvim-docker/.devcontainer/devcontainer.json) opens the `full` profile
+- Alternative profiles: choose `.devcontainer/base`, `.devcontainer/go`, `.devcontainer/web`, or `.devcontainer/full`
+- Prebuilt image: run `NVIM_DOCKER_IMAGE=ghcr.io/pandamy619/nvim-docker:latest ./devcontainer-conf/nv.sh`
+
 ## Dev Containers and Codespaces
 
-This repo also ships four devcontainer definitions:
+This repo ships one default devcontainer and four profile-specific alternatives:
 
+- `.devcontainer/devcontainer.json` defaulting to `full`
 - `.devcontainer/base/devcontainer.json`
 - `.devcontainer/go/devcontainer.json`
 - `.devcontainer/web/devcontainer.json`
@@ -47,6 +59,8 @@ This repo also ships four devcontainer definitions:
 In VS Code, use `Dev Containers: Reopen in Container` and pick the profile you want.
 
 In GitHub Codespaces, the same profiles are available when creating a codespace.
+
+Each profile runs a small `postCreateCommand` that performs `Lazy sync` once, so the editor is less raw on first open.
 
 ## Quick Start
 

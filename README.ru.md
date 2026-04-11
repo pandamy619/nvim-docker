@@ -1,5 +1,9 @@
 # nvim-docker
 
+[![CI](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml)
+[![Release](https://github.com/pandamy619/nvim-docker/actions/workflows/release.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/release.yml)
+[![GHCR](https://img.shields.io/badge/GHCR-package-blue?logo=github)](https://github.com/pandamy619/nvim-docker/pkgs/container/nvim-docker)
+
 [English](README.md)
 
 Портативный Neovim в Docker с opinionated Lua-конфигом, profile-based образами и launcher-скриптом, который открывает любой проект в изолированном контейнере.
@@ -35,10 +39,18 @@
 - Linux с Docker Engine
 - Контейнерные сборки для `amd64` и `arm64`
 
+## Старт За 30 Секунд
+
+- Локальный launcher: `./devcontainer-conf/nv.sh`
+- VS Code / Codespaces: дефолтный [`.devcontainer/devcontainer.json`](/Users/vladtagaev/MYPROJECT/nvim-docker/.devcontainer/devcontainer.json) открывает профиль `full`
+- Альтернативные профили: `.devcontainer/base`, `.devcontainer/go`, `.devcontainer/web`, `.devcontainer/full`
+- Готовый образ: `NVIM_DOCKER_IMAGE=ghcr.io/pandamy619/nvim-docker:latest ./devcontainer-conf/nv.sh`
+
 ## Dev Containers и Codespaces
 
-В репозитории также есть четыре devcontainer-конфига:
+В репозитории есть один дефолтный devcontainer и четыре профильных альтернативы:
 
+- `.devcontainer/devcontainer.json` по умолчанию ведёт на `full`
 - `.devcontainer/base/devcontainer.json`
 - `.devcontainer/go/devcontainer.json`
 - `.devcontainer/web/devcontainer.json`
@@ -47,6 +59,8 @@
 В VS Code можно выбрать `Dev Containers: Reopen in Container` и нужный профиль.
 
 В GitHub Codespaces эти же профили доступны при создании codespace.
+
+У каждого профиля есть небольшой `postCreateCommand`, который один раз делает `Lazy sync`, чтобы на первом открытии редактор был не таким “сырым”.
 
 ## Быстрый Старт
 

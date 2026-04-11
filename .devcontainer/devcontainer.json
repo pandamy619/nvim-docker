@@ -1,8 +1,8 @@
 {
-  "name": "nvim-docker (full)",
+  "name": "nvim-docker (default/full)",
   "build": {
-    "context": "../../devcontainer-conf",
-    "dockerfile": "../../devcontainer-conf/Dockerfile",
+    "context": "../devcontainer-conf",
+    "dockerfile": "../devcontainer-conf/Dockerfile",
     "target": "full"
   },
   "remoteUser": "dev",

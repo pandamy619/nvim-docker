@@ -29,6 +29,7 @@ jobs:
 
       - name: Validate devcontainer definitions
         run: |
+          python3 -m json.tool .devcontainer/devcontainer.json > /dev/null
           python3 -m json.tool .devcontainer/base/devcontainer.json > /dev/null
           python3 -m json.tool .devcontainer/go/devcontainer.json > /dev/null
           python3 -m json.tool .devcontainer/web/devcontainer.json > /dev/null
