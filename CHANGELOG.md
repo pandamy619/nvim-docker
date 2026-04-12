@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 - Added a `release-check.yml` workflow so the Release badge reflects branch health instead of a tag-only publish workflow.
 - Renamed the tag-triggered workflow to `Publish Release` to distinguish publishing from release validation.
+- Guarded terminal paste in non-editable Neovim buffers to avoid `E21` errors in special views such as file explorers and git panes.
 
 ## v0.2.0 - 2026-04-11
 

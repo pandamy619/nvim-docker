@@ -18,6 +18,7 @@ vim.opt.rtp:prepend(lazypath)
 require("core.options")
 require("core.keymaps")
 require("core.autocmds")
+require("core.paste")
 
 -- Запускаем lazy и указываем, где лежат конфиги плагинов
 require("lazy").setup("plugins")
