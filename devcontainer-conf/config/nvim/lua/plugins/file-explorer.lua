@@ -23,8 +23,12 @@ return {
     },
     config = function()
       require("neo-tree").setup({
-        -- Здесь можно будет добавлять много настроек в будущем,
-        -- но пока оставим стандартные.
+        filesystem = {
+          filtered_items = {
+            hide_dotfiles = false,
+            hide_hidden = false,
+          },
+        },
       })
     end,
   },
