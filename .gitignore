@@ -19,3 +19,6 @@ Thumbs.db
 devcontainer-conf/.netrwhist
 devcontainer-conf/local/
 devcontainer-conf/cache/
+
+# Таски
+.tasks
