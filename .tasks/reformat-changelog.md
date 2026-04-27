@@ -1,3 +1,24 @@
+# Task: Reformat CHANGELOG.md to Keep a Changelog format
+
+## Context
+
+The current `CHANGELOG.md` at the repo root contains correct content but is
+not structured according to the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+spec. Each version is a flat bullet list — entries are not grouped under
+`### Added`, `### Changed`, `### Fixed` subheadings, and the file lacks the
+standard header references and compare links.
+
+No translation work is needed — the file is already in English.
+
+## What to do
+
+Replace the entire contents of `CHANGELOG.md` (at the repo root) with the
+**exact** text below. No other words. No additions. No reordering. No edits
+to the wording of individual entries — they have been pre-categorized.
+
+### New file content
+
+```markdown
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -55,3 +76,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/pandamy619/nvim-docker/compare/v0.2.0...HEAD
 [0.2.0]: https://github.com/pandamy619/nvim-docker/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/pandamy619/nvim-docker/releases/tag/v0.1.0
+```
+
+## Verify
+
+```bash
+git diff CHANGELOG.md | head -80
+git status
+```
+
+The diff should be substantial — old plain-list format replaced with grouped
+`### Added/Changed/Fixed` sections. `git status` must show ONLY `CHANGELOG.md`
+modified, nothing else.
+
+Spot-check the result:
+
+```bash
+head -20 CHANGELOG.md
+tail -5 CHANGELOG.md
+```
+
+- `head -20` should start with `# Changelog`, mention Keep a Changelog 1.1.0
+  and Semantic Versioning, then `## [Unreleased]` with `### Added` underneath.
+- `tail -5` should end with the three compare-link reference definitions
+  (`[Unreleased]:`, `[0.2.0]:`, `[0.1.0]:`).
+
+## Do NOT commit
+
+**Do NOT run `git add`, `git commit`, or `git push`.** Leave the change as
+an unstaged modification in the working tree — the maintainer will review
+and commit it manually.
+
+## Acceptance criteria
+
+- `CHANGELOG.md` now has the structure above with `### Added / ### Changed
+  / ### Fixed` subsections under each version.
+- The wording of every individual bullet point matches the original wording
+  (no entries lost, none added, none reworded).
+- Three compare-link reference definitions at the bottom of the file.
+- Only `CHANGELOG.md` is modified — `git status` lists nothing else as
+  modified or staged.
+- The change is **unstaged**: `git diff --cached` is empty,
+  `git diff CHANGELOG.md` shows the full reformat.
+- Nothing committed, nothing pushed.
