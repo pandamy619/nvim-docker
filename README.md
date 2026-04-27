@@ -8,6 +8,8 @@
 
 Portable Neovim in Docker with an opinionated Lua config, profile-based images, and a launcher that opens any project inside an isolated editor container.
 
+![demo](docs/media/demo.gif)
+
 ## Who This Is For
 
 - Developers who want a reproducible Neovim setup without installing local LSPs and toolchains.
