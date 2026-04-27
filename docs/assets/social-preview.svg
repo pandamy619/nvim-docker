@@ -1,0 +1,131 @@
+<svg viewBox="0 0 1280 640" xmlns="http://www.w3.org/2000/svg" xml:space="preserve">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1e2e"/>
+      <stop offset="100%" stop-color="#11111b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- left accent strip -->
+  <rect x="0" y="0" width="8" height="640" fill="#a6e3a1"/>
+
+  <!-- LEFT: brand block -->
+  <text x="80" y="240" font-family="'JetBrains Mono','SF Mono',Menlo,monospace" font-size="84" font-weight="700" fill="#cdd6f4">nvim-docker</text>
+
+  <text x="80" y="295" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="28" font-weight="500" fill="#a6e3a1">Reproducible Neovim, anywhere.</text>
+
+  <text x="80" y="350" font-family="'Inter',sans-serif" font-size="20" fill="#a6adc8">
+    <tspan x="80" dy="0">Open any project in an isolated editor —</tspan>
+    <tspan x="80" dy="28">same setup on every machine. No local installs.</tspan>
+  </text>
+
+  <!-- chips -->
+  <g font-family="'Inter',sans-serif" font-size="18" font-weight="600">
+    <rect x="80" y="450" rx="20" width="110" height="40" fill="#313244"/>
+    <text x="135" y="476" text-anchor="middle" fill="#89b4fa">Docker</text>
+
+    <rect x="200" y="450" rx="20" width="115" height="40" fill="#313244"/>
+    <text x="257" y="476" text-anchor="middle" fill="#a6e3a1">Neovim</text>
+
+    <rect x="325" y="450" rx="20" width="125" height="40" fill="#313244"/>
+    <text x="387" y="476" text-anchor="middle" fill="#cba6f7">LSP-ready</text>
+  </g>
+
+  <text x="80" y="565" font-family="'JetBrains Mono',monospace" font-size="14" fill="#6c7086">github.com/pandamy619/nvim-docker</text>
+
+  <!-- RIGHT: terminal mockup with neo-tree -->
+
+  <!-- window background -->
+  <rect x="680" y="80" width="520" height="480" rx="14" fill="#181825" stroke="#313244" stroke-width="1.5"/>
+
+  <!-- title bar (top corners rounded) -->
+  <path d="M 680 94 A 14 14 0 0 1 694 80 L 1186 80 A 14 14 0 0 1 1200 94 L 1200 124 L 680 124 Z" fill="#11111b"/>
+
+  <!-- traffic lights -->
+  <circle cx="702" cy="102" r="6" fill="#f38ba8"/>
+  <circle cx="722" cy="102" r="6" fill="#f9e2af"/>
+  <circle cx="742" cy="102" r="6" fill="#a6e3a1"/>
+
+  <text x="940" y="107" font-family="'Inter',sans-serif" font-size="13" fill="#6c7086" text-anchor="middle">~/projects/api  ·  nvim</text>
+
+  <!-- selected row highlight (App.tsx) -->
+  <rect x="680" y="200" width="280" height="22" fill="#313244"/>
+
+  <!-- vertical divider between tree and buffer -->
+  <line x1="960" y1="124" x2="960" y2="510" stroke="#313244" stroke-width="1"/>
+
+  <!-- tree content -->
+  <g font-family="'JetBrains Mono','SF Mono',Menlo,monospace" font-size="14">
+    <text x="700" y="146" fill="#cdd6f4">~/project</text>
+
+    <text x="708" y="168" fill="#89b4fa">.git</text>
+    <text x="708" y="190" fill="#89b4fa">src</text>
+
+    <text x="724" y="216" fill="#89dceb">App.tsx</text>
+    <text x="724" y="238" fill="#89dceb">main.tsx</text>
+    <text x="724" y="260" fill="#f5c2e7">styles.css</text>
+
+    <text x="708" y="282" fill="#fab387" font-weight="600">src-tauri</text>
+    <text x="708" y="304" fill="#fab387">.gitignore</text>
+    <text x="708" y="326" fill="#cdd6f4">README.md</text>
+    <text x="708" y="348" fill="#cba6f7" font-weight="600">ROADMAP.md</text>
+    <text x="708" y="370" fill="#fab387">index.html</text>
+    <text x="708" y="392" fill="#f38ba8">package-lock.json</text>
+    <text x="708" y="414" fill="#f38ba8">package.json</text>
+    <text x="708" y="436" fill="#89b4fa">tsconfig.json</text>
+    <text x="708" y="458" fill="#89b4fa">vite.config.ts</text>
+    <text x="708" y="480" fill="#585b70" font-style="italic">(1 hidden item)</text>
+  </g>
+
+  <!-- buffer pane: line number + tildes -->
+  <g font-family="'JetBrains Mono','SF Mono',Menlo,monospace" font-size="14">
+    <!-- active line indicator background -->
+    <rect x="961" y="134" width="239" height="22" fill="#1e1e2e"/>
+    <text x="980" y="151" fill="#fab387" text-anchor="middle">1</text>
+    <g fill="#45475a">
+      <text x="980" y="173" text-anchor="middle">~</text>
+      <text x="980" y="195" text-anchor="middle">~</text>
+      <text x="980" y="217" text-anchor="middle">~</text>
+      <text x="980" y="239" text-anchor="middle">~</text>
+      <text x="980" y="261" text-anchor="middle">~</text>
+      <text x="980" y="283" text-anchor="middle">~</text>
+      <text x="980" y="305" text-anchor="middle">~</text>
+      <text x="980" y="327" text-anchor="middle">~</text>
+      <text x="980" y="349" text-anchor="middle">~</text>
+      <text x="980" y="371" text-anchor="middle">~</text>
+      <text x="980" y="393" text-anchor="middle">~</text>
+      <text x="980" y="415" text-anchor="middle">~</text>
+      <text x="980" y="437" text-anchor="middle">~</text>
+      <text x="980" y="459" text-anchor="middle">~</text>
+      <text x="980" y="481" text-anchor="middle">~</text>
+    </g>
+  </g>
+
+  <!-- statusline (bottom corners rounded) -->
+  <path d="M 680 510 L 1200 510 L 1200 546 A 14 14 0 0 1 1186 560 L 694 560 A 14 14 0 0 1 680 546 Z" fill="#181825"/>
+
+  <!-- NORMAL mode pill (green, bottom-left rounded) -->
+  <path d="M 680 510 L 778 510 L 778 560 L 694 560 A 14 14 0 0 1 680 546 Z" fill="#a6e3a1"/>
+  <text x="729" y="540" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#181825" text-anchor="middle">NORMAL</text>
+
+  <!-- neo-tree segment -->
+  <rect x="780" y="510" width="92" height="50" fill="#313244"/>
+  <text x="826" y="540" font-family="'JetBrains Mono',monospace" font-size="14" fill="#89b4fa" text-anchor="middle">neo-tree</text>
+
+  <!-- 25% -->
+  <rect x="874" y="510" width="56" height="50" fill="#45475a"/>
+  <text x="902" y="540" font-family="'JetBrains Mono',monospace" font-size="14" fill="#cdd6f4" text-anchor="middle">25%</text>
+
+  <!-- 4:1 -->
+  <rect x="932" y="510" width="48" height="50" fill="#45475a"/>
+  <text x="956" y="540" font-family="'JetBrains Mono',monospace" font-size="14" fill="#cdd6f4" text-anchor="middle">4:1</text>
+
+  <!-- [No Name] -->
+  <text x="1080" y="540" font-family="'JetBrains Mono',monospace" font-size="14" fill="#6c7086" text-anchor="middle">[No Name]</text>
+
+  <!-- 1:1 -->
+  <text x="1180" y="540" font-family="'JetBrains Mono',monospace" font-size="14" fill="#a6adc8" text-anchor="end">1:1</text>
+</svg>
