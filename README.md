@@ -1,8 +1,9 @@
 # nvim-docker
 
-[![CI](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml)
-[![Release](https://github.com/pandamy619/nvim-docker/actions/workflows/release-check.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/release-check.yml)
-[![GHCR](https://img.shields.io/badge/GHCR-package-blue?logo=github)](https://github.com/pandamy619/nvim-docker/pkgs/container/nvim-docker)
+[![CI](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/pandamy619/nvim-docker/actions/workflows/ci.yml)
+[![Build](https://github.com/pandamy619/nvim-docker/actions/workflows/release-check.yml/badge.svg?branch=main&event=push)](https://github.com/pandamy619/nvim-docker/actions/workflows/release-check.yml)
+[![Release](https://github.com/pandamy619/nvim-docker/actions/workflows/release.yml/badge.svg)](https://github.com/pandamy619/nvim-docker/actions/workflows/release.yml)
+[![GHCR](https://img.shields.io/badge/GHCR-ghcr.io%2Fpandamy619%2Fnvim--docker-blue?logo=github)](https://github.com/pandamy619/nvim-docker/pkgs/container/nvim-docker)
 
 [Русский](README.ru.md)
 
